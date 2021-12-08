@@ -91,3 +91,28 @@ func GetRepos(user_name string, repos_number int) (int, []MainReposData, error) 
 
 	return 200, repos, nil
 }
+
+func GetSingleRepos(user_name, repos_name string) (int, MainReposData, error) {
+	repos := MainReposData{}
+
+	resp, err := http.Get(fmt.Sprintf("https://api.github.com/repos/%s/%s", user_name, repos_name))
+	if err != nil {
+		return resp.StatusCode, repos, err
+	}
+
+	if resp.StatusCode == 404 {
+		return resp.StatusCode, repos, fmt.Errorf("Not Found")
+	}
+
+	json_decode, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return resp.StatusCode, repos, err
+	}
+
+	err = json.Unmarshal(json_decode, &repos)
+	if err != nil {
+		return resp.StatusCode, repos, err
+	}
+
+	return resp.StatusCode, repos, nil
+}
