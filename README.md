@@ -1,6 +1,20 @@
 # gitdata
 library for working with github api, written in Golang
 
+<h3>How to make a project</h3>
+
+```bash
+sudo apt install golang
+mkdir project
+cd project/
+touch main.go
+go mod init <project name>
+go get github.com/a1excoder/gitdata
+# write code in main.go
+go build && ./<project name>
+```
+
+
 <h3>Example: get user data</h3>
 
 ```Golang
