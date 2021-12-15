@@ -151,21 +151,22 @@ package main
 import (
 	"fmt"
 	"log"
+	"encoding/json"
 
 	gitdata "github.com/a1excoder/gitdata"
 )
 
 func main() {
-	user := UserData{}
+	user := gitdata.UserData{}
 	_, err := user.GetUserData("a1excoder")
 	if err != nil {
 		log.Println(err)
 		return
 	}
 
-	cod, repos, err := GetRepos("a1excoder", user.Public_repos)
+	cod, repos, err := gitdata.GetRepos("a1excoder", user.Public_repos)
 	if cod == 403 {
-		data_error := &CodeError403{}
+		data_error := &gitdata.CodeError403{}
 		err := json.Unmarshal([]byte(fmt.Sprint(err)), data_error)
 		if err != nil {
 			log.Println(err)
@@ -189,6 +190,7 @@ func main() {
 		fmt.Print("\n")
 	}
 }
+
 ```
 
 <h3>output</h3>
