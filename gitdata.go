@@ -69,9 +69,9 @@ func GetRepos(user_name string, repos_number int) (int, []MainReposData, error) 
 	if temp != float32(int(temp)) {
 		temp = float32(int(temp) + 1)
 	}
-	fmt.Println(temp)
+	// fmt.Println(temp)
 	for i := 1; i <= int(temp); i++ {
-		fmt.Println(temp2)
+		// fmt.Println(temp2)
 		temp_repos := make([]MainReposData, 0, temp2)
 
 		resp, err := http.Get(fmt.Sprintf("https://api.github.com/users/%s/repos?per_page=100&sort=updated&direction=desc&page=%d", user_name, i))
