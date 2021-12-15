@@ -39,6 +39,19 @@ func GetRepos(user_name string, repos_number int) (int, []MainReposData, error) 
 			return resp.StatusCode, nil, fmt.Errorf("Not Found")
 		}
 
+		if resp.StatusCode == 403 {
+			json_decode, err := ioutil.ReadAll(resp.Body)
+			if err != nil {
+				return resp.StatusCode, nil, err
+			}
+
+			return resp.StatusCode, nil, fmt.Errorf(string(json_decode))
+		}
+
+		if resp.StatusCode != 200 {
+			return resp.StatusCode, nil, fmt.Errorf("error code %d", resp.StatusCode)
+		}
+
 		json_decode, err := ioutil.ReadAll(resp.Body)
 		if err != nil {
 			return resp.StatusCode, nil, err
@@ -53,9 +66,7 @@ func GetRepos(user_name string, repos_number int) (int, []MainReposData, error) 
 	}
 
 	temp, temp2 := float32(repos_number)/100.0, repos_number
-	if temp == float32(int(temp)) {
-		temp = float32(int(temp))
-	} else {
+	if temp != float32(int(temp)) {
 		temp = float32(int(temp) + 1)
 	}
 	fmt.Println(temp)
@@ -72,6 +83,19 @@ func GetRepos(user_name string, repos_number int) (int, []MainReposData, error) 
 			return resp.StatusCode, nil, fmt.Errorf("Not Found")
 		}
 
+		if resp.StatusCode == 403 {
+			json_decode, err := ioutil.ReadAll(resp.Body)
+			if err != nil {
+				return resp.StatusCode, nil, err
+			}
+
+			return resp.StatusCode, nil, fmt.Errorf(string(json_decode))
+		}
+
+		if resp.StatusCode != 200 {
+			return resp.StatusCode, nil, fmt.Errorf("error code %d", resp.StatusCode)
+		}
+
 		json_decode, err := ioutil.ReadAll(resp.Body)
 		if err != nil {
 			return resp.StatusCode, nil, err
@@ -81,10 +105,7 @@ func GetRepos(user_name string, repos_number int) (int, []MainReposData, error) 
 		if err != nil {
 			return resp.StatusCode, nil, err
 		}
-
-		for _, rep_ := range temp_repos {
-			repos = append(repos, rep_)
-		}
+		repos = append(repos, temp_repos...)
 
 		temp2 -= 100
 	}

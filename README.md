@@ -140,3 +140,61 @@ a1excoder/laravel_ajax
 a1excoder/GoodCrypt
 a1excoder/RESTful_API
 ```
+
+
+
+<h3>Example: get all user repos data with error 403</h3>
+
+```Golang
+package main
+
+import (
+	"fmt"
+	"log"
+
+	gitdata "github.com/a1excoder/gitdata"
+)
+
+func main() {
+	user := UserData{}
+	_, err := user.GetUserData("a1excoder")
+	if err != nil {
+		log.Println(err)
+		return
+	}
+
+	cod, repos, err := GetRepos("a1excoder", user.Public_repos)
+	if cod == 403 {
+		data_error := &CodeError403{}
+		err := json.Unmarshal([]byte(fmt.Sprint(err)), data_error)
+		if err != nil {
+			log.Println(err)
+		}
+
+		fmt.Printf("message: %s\ndoc. url: %s\n", data_error.Message, data_error.Documentation_url)
+		return
+	}
+
+	if err != nil {
+		log.Println(err)
+		return
+	}
+
+	for i, rep := range repos {
+		fmt.Printf("%d) %s", i, rep.Full_name)
+		if rep.License.Name != "" {
+			fmt.Printf("(%s)", rep.License.Name)
+		}
+
+		fmt.Print("\n")
+	}
+}
+```
+
+<h3>output</h3>
+
+```
+message: API rate limit exceeded for 0.0.0.0. (But here's the good news: Authenticated requests get a higher rate limit. Check out the documentation for more details.)
+doc. url: https://docs.github.com/rest/overview/resources-in-the-rest-api#rate-limiting
+```
+

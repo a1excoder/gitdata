@@ -91,3 +91,8 @@ type MainReposData struct {
 	Open_issues       int
 	Default_branch    string
 }
+
+type CodeError403 struct {
+	Message           string
+	Documentation_url string
+}
