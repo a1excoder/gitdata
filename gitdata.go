@@ -28,51 +28,13 @@ func (udP *UserData) GetUserData(user_name string) (int, error) {
 
 func GetRepos(user_name string, repos_number int) (int, []MainReposData, error) {
 	repos := make([]MainReposData, 0, repos_number)
+	tmp_repos := make([]MainReposData, 0, 100)
 
-	if repos_number <= 100 {
-		resp, err := http.Get(fmt.Sprintf("https://api.github.com/users/%s/repos?per_page=100&sort=updated&direction=desc&page=1", user_name))
-		if err != nil {
-			return resp.StatusCode, nil, err
-		}
-
-		if resp.StatusCode == 404 {
-			return resp.StatusCode, nil, fmt.Errorf("Not Found")
-		}
-
-		if resp.StatusCode == 403 {
-			json_decode, err := ioutil.ReadAll(resp.Body)
-			if err != nil {
-				return resp.StatusCode, nil, err
-			}
-
-			return resp.StatusCode, nil, fmt.Errorf(string(json_decode))
-		}
-
-		if resp.StatusCode != 200 {
-			return resp.StatusCode, nil, fmt.Errorf("error code %d", resp.StatusCode)
-		}
-
-		json_decode, err := ioutil.ReadAll(resp.Body)
-		if err != nil {
-			return resp.StatusCode, nil, err
-		}
-
-		err = json.Unmarshal(json_decode, &repos)
-		if err != nil {
-			return resp.StatusCode, nil, err
-		}
-
-		return 200, repos, nil
+	tmp := float32(repos_number) / 100.0
+	if tmp != float32(int(tmp)) {
+		tmp = float32(int(tmp) + 1)
 	}
-
-	temp, temp2 := float32(repos_number)/100.0, repos_number
-	if temp != float32(int(temp)) {
-		temp = float32(int(temp) + 1)
-	}
-	// fmt.Println(temp)
-	for i := 1; i <= int(temp); i++ {
-		// fmt.Println(temp2)
-		temp_repos := make([]MainReposData, 0, temp2)
+	for i := 1; i <= int(tmp); i++ {
 
 		resp, err := http.Get(fmt.Sprintf("https://api.github.com/users/%s/repos?per_page=100&sort=updated&direction=desc&page=%d", user_name, i))
 		if err != nil {
@@ -101,13 +63,12 @@ func GetRepos(user_name string, repos_number int) (int, []MainReposData, error) 
 			return resp.StatusCode, nil, err
 		}
 
-		err = json.Unmarshal(json_decode, &temp_repos)
+		err = json.Unmarshal(json_decode, &tmp_repos)
 		if err != nil {
 			return resp.StatusCode, nil, err
 		}
-		repos = append(repos, temp_repos...)
-
-		temp2 -= 100
+		repos = append(repos, tmp_repos...)
+		tmp_repos = tmp_repos[:0]
 	}
 
 	return 200, repos, nil
