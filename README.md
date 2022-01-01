@@ -9,7 +9,7 @@ mkdir project
 cd project/
 touch main.go
 go mod init <project name>
-go get github.com/a1excoder/gitdata
+go get -v github.com/a1excoder/gitdata
 # write code in main.go
 go build && ./<project name>
 ```
